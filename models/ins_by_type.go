@@ -1,6 +1,12 @@
 package models
 
-type ReceiveRegisterIns struct {
+type ReceiveInsByType struct {
+	Type string `json:"type"`
+}
+
+//response will be list of this struct
+type SendInsByType struct {
+	PolicyRefId string `json:"policy_ref_id"`
 	InsuranceName string `json:"insurance_name"`
 	CompanyName string `json:"company_name"`
 	Type string `json:"type"`
@@ -10,8 +16,9 @@ type ReceiveRegisterIns struct {
 	OtherDetails string `json:"other_details"`
 	ClaimSuccessPercentage string `json:"claim_success_percentage"`
 	LaunchDate string `json:"launch_date"`
-}
-
-type SendRegisterIns struct {
-	PolicyRefId string `json:"policy_ref_id"`
+	Claimed string `json:"claimed"`
+	ClaimAmount string `json:"claim_amount"`
+	ClaimDate string `json:"claim_date"`
+	BuyDate string `json:"buy_date"`
+	OtherDetails string `json:"other_details"`
 }
