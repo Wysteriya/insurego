@@ -23,6 +23,7 @@ func privateRoutes(rg *gin.RouterGroup) {
 	})
 	clientRoute.POST("/node", services.NodePost)
 	clientRoute.POST("/buy_ins", services.BuyIns)
+	clientRoute.POST("/status", services.Status)
 }
 
 func main() {

@@ -79,24 +79,25 @@ var CSBuyIns = cs.ConsensusState{
 		if !ok {
 			return fmt.Errorf("no nodes")
 		}
-		if pk, _ := nodes[b.Data["public_key"].(string)]; pk == nil {
+		node, ok := nodes[b.Data["public_key"].(string)].(data.Data)
+		if !ok {
 			return fmt.Errorf("public key not registered")
 		}
 		ins, ok := sd.Data["ins"].(data.Data)
 		if !ok || ins[b.Data["policy_ref_id"].(string)] == nil {
 			return fmt.Errorf("policy not registered")
 		}
-		pols, ok := nodes["Policies"].(data.Array)
+		pols, ok := node["Policies"].(data.Array)
 		if !ok {
-			nodes["Policies"] = data.Array{}
-			pols = nodes["Policies"].(data.Array)
+			node["Policies"] = data.Array{}
+			pols = node["Policies"].(data.Array)
 		}
 		for _, pol := range pols {
 			if pol == b.Data["policy_ref_id"].(string) {
 				return fmt.Errorf("policy already bought")
 			}
 		}
-		nodes["Policies"] = append(pols, b.Data["policy_ref_id"].(string))
+		node["Policies"] = append(pols, b.Data["policy_ref_id"].(string))
 		return nil
 	},
 }

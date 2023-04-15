@@ -29,6 +29,11 @@ func RegisterIns(ctx *gin.Context) {
 		httpRes.Error(err)
 		return
 	}
+	err = gpp.BC.AddBlock(b)
+	if err != nil {
+		httpRes.Error(err)
+		return
+	}
 
 	sendObj.PolicyRefId = hex.EncodeToString(b.Hash[:])
 	httpRes.SendJson(sendObj)

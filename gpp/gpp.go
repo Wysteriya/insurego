@@ -8,7 +8,6 @@ import (
 	"baby-chain/tools/data"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"os"
 )
 
@@ -25,8 +24,11 @@ var (
 
 func genesisData() data.Data {
 	publicKey, privateKey, _ := wallet.GenerateKeys()
-	fmt.Println(privateKey)
-	fmt.Println(publicKey)
+	file, _ := os.OpenFile("gpp/master.txt", os.O_RDWR|os.O_CREATE, 0666)
+	_, _ = file.Write([]byte(publicKey))
+	_, _ = file.Write([]byte("\n"))
+	_, _ = file.Write([]byte(privateKey))
+	_ = file.Close()
 	return data.Data{
 		"master": data.Data{
 			publicKey: data.Data{
