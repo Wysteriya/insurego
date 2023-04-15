@@ -8,18 +8,26 @@ import (
 )
 
 func publicRoutes(rg *gin.RouterGroup) {
-	clientRoute := rg.Group("/public")
+	clientRoute := rg.Group("/public", func(ctx *gin.Context) {
+		gpp.SaveHyperParams()
+	})
 	clientRoute.GET("/sync", services.SyncGet)
 	clientRoute.POST("/sync", services.SyncPost)
+	clientRoute.POST("/register_ins", services.RegisterIns)
+	clientRoute.GET("/list_ins", services.INSList)
 }
 
 func privateRoutes(rg *gin.RouterGroup) {
-	clientRoute := rg.Group("/private")
+	clientRoute := rg.Group("/private", func(ctx *gin.Context) {
+		gpp.SaveHyperParams()
+	})
 	clientRoute.POST("/node", services.NodePost)
+	clientRoute.POST("/buy_ins", services.BuyIns)
 }
 
 func main() {
 	gpp.BC, gpp.SD, gpp.CSAlgo = gpp.FetchHyperParams()
+	gpp.SaveHyperParams()
 	chainName := "baby_chain"
 	go func() {
 		server := gin.Default()

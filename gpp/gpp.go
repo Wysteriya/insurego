@@ -3,10 +3,12 @@ package gpp
 import (
 	"baby-chain/blockchain"
 	cons "baby-chain/blockchain/consensus_state"
+	"baby-chain/blockchain/wallet"
 	"baby-chain/tools"
 	"baby-chain/tools/data"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"os"
 )
 
@@ -22,13 +24,22 @@ var (
 )
 
 func genesisData() data.Data {
-	return data.Data{}
+	publicKey, privateKey, _ := wallet.GenerateKeys()
+	fmt.Println(privateKey)
+	fmt.Println(publicKey)
+	return data.Data{
+		"master": data.Data{
+			publicKey: data.Data{
+				"name": "Test",
+			},
+		},
+	}
 }
 
 func FetchHyperParams() (blockchain.Blockchain, cons.StateData, cons.CSAlgo) {
 	var bc blockchain.Blockchain
 	var sd cons.StateData
-	var csAlgo = cons.New()
+	var csAlgo = cons.New(CSRegisterIns, CSBuyIns)
 	if _, err := os.Open(bcFName); errors.Is(err, os.ErrNotExist) {
 		bc = blockchain.New(genesisData())
 	} else {
@@ -38,6 +49,11 @@ func FetchHyperParams() (blockchain.Blockchain, cons.StateData, cons.CSAlgo) {
 	}
 	if _, err := os.Open(sdFName); errors.Is(err, os.ErrNotExist) {
 		sd, err = csAlgo.GenSD(&bc)
+		if err != nil {
+			panic(err)
+		}
+		CSGenesis.Check(&bc, &sd, bc.Chain[0])
+		err := CSGenesis.Run(&bc, &sd, bc.Chain[0])
 		if err != nil {
 			panic(err)
 		}
