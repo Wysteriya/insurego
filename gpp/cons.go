@@ -4,6 +4,7 @@ import (
 	"baby-chain/blockchain"
 	"baby-chain/blockchain/block"
 	cs "baby-chain/blockchain/consensus_state"
+	"baby-chain/tools"
 	"baby-chain/tools/data"
 	"encoding/hex"
 	"fmt"
@@ -98,6 +99,65 @@ var CSBuyIns = cs.ConsensusState{
 			}
 		}
 		node["Policies"] = append(pols, b.Data["policy_ref_id"].(string))
+		return nil
+	},
+}
+
+var CSClaimIns = cs.ConsensusState{
+	Check: func(_ *blockchain.Blockchain, _ *cs.StateData, b block.Block) bool {
+		if b.Header[block.Head] != "ClaimIns" {
+			return false
+		}
+		if _, ok := b.Header["signature"].(string); !ok {
+			return false
+		}
+		if _, ok := b.Data["public_key"].(string); !ok {
+			return false
+		}
+		if _, ok := b.Data["policy_ref_id"].(string); !ok {
+			return false
+		}
+		if _, ok := b.Data["claim_amount"].(string); !ok {
+			return false
+		}
+		if _, ok := b.Data["claim_date"].(string); !ok {
+			return false
+		}
+		return true
+	},
+	Run: func(bc *blockchain.Blockchain, sd *cs.StateData, b block.Block) error {
+		if cs.SignCheckBlock(b, "signature") != nil {
+			return fmt.Errorf("signature check failed")
+		}
+		nodes, ok := sd.Data[cs.NODES].(data.Data)
+		if !ok {
+			return fmt.Errorf("no nodes")
+		}
+		node, ok := nodes[b.Data["public_key"].(string)].(data.Data)
+		if !ok {
+			return fmt.Errorf("public key not registered")
+		}
+		ins, ok := sd.Data["ins"].(data.Data)
+		if !ok || ins[b.Data["policy_ref_id"].(string)] == nil {
+			return fmt.Errorf("policy not registered")
+		}
+		pols, ok := node["Policies"].(data.Array)
+		if !ok {
+			return fmt.Errorf("no policies bought")
+		}
+		if ok := tools.Contains[string](pols, b.Data["policy_ref_id"].(string)); !ok {
+			return fmt.Errorf("Policy not bought")
+		}
+		claims, ok := node["Claims"].(data.Data)
+		if ok {
+			if _, ok := claims[b.Data["policy_ref_id"].(string)]; ok {
+				return fmt.Errorf("Policy already claimed")
+			}
+		} else {
+			node["Claims"] = data.Data{}
+			claims = node["Claims"].(data.Data)
+		}
+		claims[b.Data["policy_ref_id"].(string)] = data.Data{"claim_amount": b.Data["claim_amount"].(string), "claim_date": b.Data["claim_date"].(string)}
 		return nil
 	},
 }

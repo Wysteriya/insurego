@@ -41,7 +41,7 @@ func genesisData() data.Data {
 func FetchHyperParams() (blockchain.Blockchain, cons.StateData, cons.CSAlgo) {
 	var bc blockchain.Blockchain
 	var sd cons.StateData
-	var csAlgo = cons.New(CSRegisterIns, CSBuyIns)
+	var csAlgo = cons.New(CSRegisterIns, CSBuyIns, CSClaimIns)
 	if _, err := os.Open(bcFName); errors.Is(err, os.ErrNotExist) {
 		bc = blockchain.New(genesisData())
 	} else {
