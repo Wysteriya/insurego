@@ -18,6 +18,7 @@ func publicRoutes(rg *gin.RouterGroup) {
 	clientRoute.POST("/register_ins", services.RegisterIns)
 	clientRoute.GET("/list_ins", services.INSList)
 	clientRoute.POST("/login", services.Login)
+	clientRoute.POST("/user_login", services.UserLogin)
 }
 
 func privateRoutes(rg *gin.RouterGroup) {
