@@ -16,7 +16,6 @@ func BuyIns(ctx *gin.Context) {
 		httpRes.Error(err)
 		return
 	}
-
 	var b = gpp.BC.MineBlock("BuyIns", data.Data{
 		"public_key":    receiveObj.PublicKey,
 		"policy_ref_id": receiveObj.PolicyRefId,

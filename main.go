@@ -17,6 +17,7 @@ func publicRoutes(rg *gin.RouterGroup) {
 	clientRoute.POST("/sync", services.SyncPost)
 	clientRoute.POST("/register_ins", services.RegisterIns)
 	clientRoute.GET("/list_ins", services.INSList)
+	clientRoute.POST("/ins_havs", services.InsHavs)
 	clientRoute.POST("/login", services.Login)
 	clientRoute.POST("/user_login", services.UserLogin)
 }
