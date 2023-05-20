@@ -44,5 +44,6 @@ func Status(ctx *gin.Context) {
 	}
 
 	sendObj.Array = insList
+	sendObj.Info = node
 	httpRes.SendJson(sendObj)
 }
