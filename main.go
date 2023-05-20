@@ -3,8 +3,10 @@ package main
 import (
 	"baby-chain/gpp"
 	"baby-chain/gpp/services"
-	"github.com/gin-gonic/gin"
 	"log"
+
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 )
 
 func publicRoutes(rg *gin.RouterGroup) {
@@ -16,6 +18,8 @@ func publicRoutes(rg *gin.RouterGroup) {
 	clientRoute.POST("/register_ins", services.RegisterIns)
 	clientRoute.GET("/list_ins", services.INSList)
 	clientRoute.POST("/ins_havs", services.InsHavs)
+	clientRoute.POST("/login", services.Login)
+	clientRoute.POST("/user_login", services.UserLogin)
 }
 
 func privateRoutes(rg *gin.RouterGroup) {
@@ -24,6 +28,7 @@ func privateRoutes(rg *gin.RouterGroup) {
 	})
 	clientRoute.POST("/node", services.NodePost)
 	clientRoute.POST("/buy_ins", services.BuyIns)
+	clientRoute.POST("/claim_ins", services.ClaimIns)
 	clientRoute.POST("/status", services.Status)
 }
 
@@ -33,11 +38,13 @@ func main() {
 	chainName := "baby_chain"
 	go func() {
 		server := gin.Default()
+		server.Use(cors.Default())
 		basePath := server.Group("/" + chainName)
 		privateRoutes(basePath)
-		log.Fatalln(server.Run("127.0.0.1:9080"))
+		log.Fatalln(server.Run(":9080"))
 	}()
 	server := gin.Default()
+	server.Use(cors.Default())
 	basePath := server.Group("/" + chainName)
 	publicRoutes(basePath)
 	log.Fatalln(server.Run(":9090"))
