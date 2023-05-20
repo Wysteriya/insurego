@@ -8,4 +8,5 @@ type ReceiveStatus struct {
 
 type SendStatus struct {
 	data.Array
+	Info data.Data `json:"info"`
 }

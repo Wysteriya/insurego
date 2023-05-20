@@ -98,6 +98,12 @@ var CSBuyIns = cs.ConsensusState{
 			}
 		}
 		node["Policies"] = append(pols, b.Data["policy_ref_id"].(string))
+		buyers, ok := ins[b.Data["policy_ref_id"].(string)].(data.Data)["Buyer"].(data.Array)
+		if !ok {
+			ins[b.Data["policy_ref_id"].(string)].(data.Data)["Buyer"] = data.Array{}
+			buyers = ins[b.Data["policy_ref_id"].(string)].(data.Data)["Buyer"].(data.Array)
+		}
+		ins[b.Data["policy_ref_id"].(string)].(data.Data)["Buyer"] = append(buyers, b.Data["public_key"].(string))
 		return nil
 	},
 }
